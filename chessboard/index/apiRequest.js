@@ -1,7 +1,7 @@
 
 // api request to the server
 async function apiRequest(requestFor, apiInput = "") {
-    var hosting = "https://chess-pu59.onrender.com:10000/"
+    var hosting = "https://chess-pu59.onrender.com/"
     var apiHit = {
     }
     switch (requestFor) {
