@@ -298,11 +298,12 @@ $(document).ready(() => {
     })
     $('.white,.black').on('click', (e) => {
         $('.sideTitle').text('Enter Code')
-        $('.codeForJoin,.setCode').css({ 'display': 'block' });
+        // $('.codeForJoin,.setCode').css({ 'display': 'block' });
         $('.startGame,.joinGame,.start,.white,.black').css({ 'display': 'none' });
         $('.message').text('Share code to the other player to join!')
         userSide = $(e.target)[0].dataset.type;
         setTheme(startPosition, userSide)
+        loader('active');
     })
 
     var gameId;
@@ -321,6 +322,8 @@ $(document).ready(() => {
         apiRequest('setTheme', req).then((data) => {
             theme = data;
             gameId = data.gameId;
+            $('.codeForJoin,.setCode').css({ 'display': 'block' });
+            loader('inactive');
             // boardCustomize(data);
         });
     }
