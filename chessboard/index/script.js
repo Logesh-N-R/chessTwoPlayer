@@ -1,5 +1,7 @@
 $(document).ready(() => {
     const password = "abc123";
+    var playerSide;
+
     loader('active');
     function loader(type) {
         if (type == 'active') {
@@ -241,7 +243,7 @@ $(document).ready(() => {
                 $('.user,.history').css({ "background-image": theme.bgImage })
             }
             themeChange(theme);
-            rotateBoard(theme.active)
+            rotateBoard(playerSide)
         }
     }
 
@@ -310,19 +312,20 @@ $(document).ready(() => {
     var gameStartBy;
     function setTheme(startPosition, userSide, theme) {
         let blackTheme, whiteTheme
-
         if (userSide == 'black') {
             myMove = false;
-            whiteTheme = "";
-            theme.active='black'
-            rotateBoard('black');
+            whiteTheme = theme;
+            playerSide = 'black';
         } else {
             myMove = true;
+            playerSide = 'white';
             whiteTheme = theme;
         }
-        req = { board: startPosition, currentUser: userSide, blackTheme: blackTheme, whiteTheme: whiteTheme, gameStartBy: userSide };
+        rotateBoard(playerSide);
+        req = { board: startPosition, currentUser: 'white', blackTheme: blackTheme, whiteTheme: whiteTheme, gameStartBy: userSide };
         apiRequest('setTheme', req).then((data) => {
             theme = data;
+            console.log(theme)
             gameId = data.gameId;
             $('.codeForJoin,.setCode').css({ 'display': 'block' });
             loader('inactive');
@@ -375,6 +378,8 @@ $(document).ready(() => {
         fetchTheme(userCode)
     })
     function fetchTheme(code) {
+console.log(theme,'settheme');
+
         gameId = code.split('#')[0];
         gameCode = code;
         req = { gameId: gameId, activate: code };
@@ -383,6 +388,7 @@ $(document).ready(() => {
             if (data.valid) {
                 $('.sideContainer').css({ 'display': 'none' });
                 theme.active = data.currentUser;
+                playerSide = data.currentUser;
 
                 if (theme.active == 'black') {
                     myMove = false;
@@ -406,16 +412,22 @@ $(document).ready(() => {
     var boardData;
 
     function checkForChanges() {
+
         setInterval(() => {
+            console.log(theme.active,'active');
+            console.log(playerSide,'playerSide');
+
             req = { gameId: gameId };
             apiRequest('getApprove', req).then((data) => {
-                if (data.currentUser == theme.active) {
+                if (data.currentUser == playerSide) {
                     myMove = true;
                     boardData = data.board;
-                    myAlert(`Your Move!`, 2000, 15000);
+                    $('.runningMessage').text('Your Move!')
+                    myAlert(`Your Move!`, 1000, 15000);
                 } else {
                     // loader('active');
-                    myAlert(`Opponent move!`, 2000, 15000);
+                    $('.runningMessage').text('Opponent is playing!')
+                    myAlert(`Opponent move!`, 1000, 15000);
                     myMove = false;
                 }
                 setBoard(JSON.parse(boardData));
@@ -589,13 +601,13 @@ $(document).ready(() => {
 
     // user alert
     function clickAlert(clicked) {
-        if (theme.active == "white") {
+        if (playerSide == "white") {
             if (bc.includes(clicked.coin)) {
                 myAlert(`Your Coin is ${theme.active}!`, 2000);
                 return false;
             }
         }
-        if (theme.active == "black") {
+        if (playerSide == "black") {
             if (wc.includes(clicked.coin)) {
                 myAlert(`Your Coin is ${theme.active}!`, 2000);
                 return false;
