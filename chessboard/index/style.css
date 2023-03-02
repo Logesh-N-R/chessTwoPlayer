@@ -114,6 +114,7 @@
 header,
 footer {
     display: flex;
+    flex-direction: column;
     justify-content: space-around;
     color: white;
     font-weight: bolder;
