@@ -314,6 +314,7 @@ $(document).ready(() => {
         if (userSide == 'black') {
             myMove = false;
             whiteTheme = "";
+            theme.active='black'
             rotateBoard('black');
         } else {
             myMove = true;
